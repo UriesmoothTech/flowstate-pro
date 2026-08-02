@@ -1,0 +1,7 @@
+# CODEOWNERS
+# These owners are automatically requested for review when a PR touches
+# matching files. Replace @UriesmoothTech/maintainers with your actual
+# GitHub team slug once it exists (Settings -> Teams -> New team).
+
+* @UriesmoothTech/maintainers
+
