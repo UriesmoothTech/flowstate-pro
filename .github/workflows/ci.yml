@@ -1,45 +1,39 @@
 name: CI
 
 on:
-n  push:
-    branches: [main]
+  push:
+    branches: [ main, master, develop ]
   pull_request:
-    branches: [main]
-  workflow_dispatch:
+    branches: [ main, master, develop ]
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check for package.json
-        id: check
-        run: |
-          if [ -f package.json ]; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "No package.json yet — skipping build/test until the project is scaffolded."
-          fi
-
-      - name: Setup Node.js
-        if: steps.check.outputs.exists == 'true'
+      - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      - name: Verify package.json presence
+        run: |
+          if [ ! -f "package.json" ]; then
+            echo "Error: package.json not found!"
+            exit 1
+          fi
+
       - name: Install dependencies
-        if: steps.check.outputs.exists == 'true'
         run: npm ci
 
-      - name: Run tests
-        if: steps.check.outputs.exists == 'true'
+      - name: Run build / test suite
         run: npm test --if-present
-
-      - name: Build
-        if: steps.check.outputs.exists == 'true'
-        run: npm run build --if-present
 
