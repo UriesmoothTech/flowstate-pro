@@ -36,4 +36,3 @@ jobs:
 
       - name: Run build / test suite
         run: npm test --if-present
-
