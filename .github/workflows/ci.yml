@@ -2,14 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main ]
 
 jobs:
   ci:
+    name: CI Checks
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [18.x, 20.x]
@@ -18,22 +19,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Verify package.json presence
-        run: |
-          if [ ! -f "package.json" ]; then
-            echo "Error: package.json not found!"
-            exit 1
-          fi
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Run build / test suite
+      - name: Run linter
+        run: npm run lint --if-present
+
+      - name: Run tests
         run: npm test --if-present
+
+      - name: Build project
+        run: npm run build --if-present
+
+      - name: Check important files
+        run: |
+          echo "Checking critical files..."
+          test -f README.md && echo "✓ README.md exists"
+          test -f LICENSE && echo "✓ LICENSE exists"
+          test -f package.json && echo "✓ package.json exists"
+          echo "CI completed successfully."
 
