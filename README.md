@@ -54,7 +54,7 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Node.js** 18.0.0 or higher
+- **Node.js** 20.0.0 or higher
 - **npm** 9.0.0 or higher
 - **Git** for version control
 - Optional: Docker for containerized deployment
@@ -63,8 +63,8 @@
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/uriesmooth/Uriesmooth-.git
-cd Uriesmooth-
+git clone https://github.com/UriesmoothTech/flowstate-pro.git
+cd flowstate-pro
 ```
 
 #### 2. Install Dependencies
@@ -430,8 +430,8 @@ git push origin feature/amazing-feature
 
 ## 🐛 Bug Reports & Feature Requests
 
-- **🐛 Found a bug?** [Create an Issue](https://github.com/uriesmooth/Uriesmooth-/issues/new?labels=bug)
-- **✨ Have an idea?** [Request a Feature](https://github.com/uriesmooth/Uriesmooth-/discussions/new)
+- **🐛 Found a bug?** [Create an Issue](https://github.com/UriesmoothTech/flowstate-pro/issues/new?labels=bug)
+- **✨ Have an idea?** [Request a Feature](https://github.com/UriesmoothTech/flowstate-pro/discussions/new)
 
 ---
 
@@ -452,17 +452,17 @@ git push origin feature/amazing-feature
 - [ ] AI assistant for pipeline building
 - [ ] Advanced workflow templates
 
-[View Full Roadmap →](https://github.com/uriesmooth/Uriesmooth-/projects)
+[View Full Roadmap →](https://github.com/UriesmoothTech/flowstate-pro/projects)
 
 ---
 
 ## 📞 Support
 
 - **📖 Documentation:** [docs/](docs/)
-- **💬 Community Chat:** [GitHub Discussions](https://github.com/uriesmooth/Uriesmooth-/discussions)
-- **🐛 Issues:** [GitHub Issues](https://github.com/uriesmooth/Uriesmooth-/issues)
-- **📧 Email:** support@flowstatepro.io
-- **🐦 Twitter:** [@flowstatepro](https://twitter.com/flowstatepro)
+- **💬 Community Chat:** [GitHub Discussions](https://github.com/UriesmoothTech/flowstate-pro/discussions)
+- **🐛 Issues:** [GitHub Issues](https://github.com/UriesmoothTech/flowstate-pro/issues)
+- **📧 Email:** info@uriesmooth.online
+- **𝕏 X:** [@flowstatepro](https://x.com/uriesmoothtech)
 
 ---
 
@@ -476,17 +476,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built with ❤️ for teams that ship fast
 - Inspired by modern workflow automation platforms
-- Thanks to all [contributors](https://github.com/uriesmooth/Uriesmooth-/graphs/contributors)
+- Thanks to all [contributors](https://github.com/UriesmoothTech/flowstate-pro/graphs/contributors)
 - Special thanks to the open-source community
 
 ---
 
 ## 📊 Project Stats
 
-![GitHub Stars](https://img.shields.io/github/stars/uriesmooth/Uriesmooth-?style=social)
-![GitHub Forks](https://img.shields.io/github/forks/uriesmooth/Uriesmooth-?style=social)
-![GitHub Watchers](https://img.shields.io/github/watchers/uriesmooth/Uriesmooth-?style=social)
-![GitHub License](https://img.shields.io/github/license/uriesmooth/Uriesmooth-)
+![GitHub Stars](https://img.shields.io/github/stars/UriesmoothTech/flowstate-pro?style=social)
+![GitHub Forks](https://img.shields.io/github/forks/UriesmoothTech/flowstate-pro?style=social)
+![GitHub Watchers](https://img.shields.io/github/watchers/UriesmoothTech/flowstate-pro?style=social)
+![GitHub License](https://img.shields.io/github/license/UriesmoothTech/flowstate-pro)
 
 ---
 
