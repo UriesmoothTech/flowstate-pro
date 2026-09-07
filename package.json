@@ -1,0 +1,33 @@
+{
+  "name": "flowstate-pro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FlowState Pro by Uriesmooth — intelligent workflow orchestration platform by UriesmoothTech.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "next": "^16.3.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.19.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.3.3",
+    "jest": "^30.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
