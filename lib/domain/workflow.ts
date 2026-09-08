@@ -1,23 +1,11 @@
-export type WorkflowStatus =
-  | "draft"
-  | "active"
-  | "paused"
-  | "completed"
-  | "failed";
+sed -n '1,220p' lib/domain/workflow.ts
 
-export interface Workflow {
-  id: string;
-  name: string;
-  description: string;
-  status: WorkflowStatus;
-  createdAt: string;
-  updatedAt: string;
-}
+echo "=== LIFECYCLE ==="
+sed -n '1,260p' lib/services/workflow-execution-lifecycle-service.ts
 
-export interface WorkflowExecution {
-  id: string;
-  workflowId: string;
-  status: "queued" | "running" | "completed" | "failed";
-  startedAt?: string;
-  completedAt?: string;
-}
+echo "=== REPOSITORY ==="
+sed -n '1,220p' lib/repositories/workflow-execution-repository.ts
+
+echo "=== TESTS ==="
+sed -n '1,300p' tests/workflow-execution-lifecycle-service.test.ts
+
