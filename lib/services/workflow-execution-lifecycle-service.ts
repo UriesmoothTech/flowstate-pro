@@ -1,11 +1,17 @@
 import type { WorkflowExecution } from "@/lib/domain/workflow";
-import { getWorkflowExecution, updateWorkflowExecution } from "@/lib/services/workflow-execution-service";
+import type { WorkflowExecutionRepository } from "@/lib/repositories/workflow-execution-repository";
+import {
+  getWorkflowExecution,
+  updateWorkflowExecution,
+  defaultWorkflowExecutionRepository,
+} from "@/lib/services/workflow-execution-service";
 
 export function startWorkflowExecution(
   id: string,
   startedAt: string,
+  repository: WorkflowExecutionRepository = defaultWorkflowExecutionRepository,
 ): WorkflowExecution {
-  const execution = getWorkflowExecution(id);
+  const execution = getWorkflowExecution(id, repository);
 
   if (!execution) {
     throw new Error(`Workflow execution not found: ${id}`);
@@ -17,18 +23,22 @@ export function startWorkflowExecution(
     );
   }
 
-  return updateWorkflowExecution({
-    ...execution,
-    status: "running",
-    startedAt,
-  });
+  return updateWorkflowExecution(
+    {
+      ...execution,
+      status: "running",
+      startedAt,
+    },
+    repository,
+  );
 }
 
 export function completeWorkflowExecution(
   id: string,
   completedAt: string,
+  repository: WorkflowExecutionRepository = defaultWorkflowExecutionRepository,
 ): WorkflowExecution {
-  const execution = getWorkflowExecution(id);
+  const execution = getWorkflowExecution(id, repository);
 
   if (!execution) {
     throw new Error(`Workflow execution not found: ${id}`);
@@ -40,18 +50,22 @@ export function completeWorkflowExecution(
     );
   }
 
-  return updateWorkflowExecution({
-    ...execution,
-    status: "completed",
-    completedAt,
-  });
+  return updateWorkflowExecution(
+    {
+      ...execution,
+      status: "completed",
+      completedAt,
+    },
+    repository,
+  );
 }
 
 export function failWorkflowExecution(
   id: string,
   completedAt: string,
+  repository: WorkflowExecutionRepository = defaultWorkflowExecutionRepository,
 ): WorkflowExecution {
-  const execution = getWorkflowExecution(id);
+  const execution = getWorkflowExecution(id, repository);
 
   if (!execution) {
     throw new Error(`Workflow execution not found: ${id}`);
@@ -63,9 +77,12 @@ export function failWorkflowExecution(
     );
   }
 
-  return updateWorkflowExecution({
-    ...execution,
-    status: "failed",
-    completedAt,
-  });
+  return updateWorkflowExecution(
+    {
+      ...execution,
+      status: "failed",
+      completedAt,
+    },
+    repository,
+  );
 }
