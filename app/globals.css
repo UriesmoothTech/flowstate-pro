@@ -89,3 +89,199 @@ h1 {
   color: var(--muted);
   font-size: 0.9rem;
 }
+
+/* FlowState Pro application architecture */
+
+.dashboard-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+}
+
+.sidebar {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem;
+  background: rgba(8, 8, 12, 0.92);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #09090b;
+  font-weight: 800;
+}
+
+.brand small {
+  display: block;
+  margin-top: 0.2rem;
+  opacity: 0.55;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar nav li + li {
+  margin-top: 0.4rem;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 0.7rem 0.8rem;
+  border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.75;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a:focus-visible {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dashboard-content {
+  min-width: 0;
+}
+
+.page-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  margin: 0.3rem 0 0.7rem;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: -0.04em;
+}
+
+.page-header p {
+  max-width: 700px;
+  opacity: 0.7;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  opacity: 0.55 !important;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.metric-card,
+.panel {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.metric-card {
+  padding: 1.4rem;
+}
+
+.metric-card span {
+  display: block;
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 1.7rem;
+}
+
+.panel {
+  padding: 1.4rem;
+}
+
+.panel h2 {
+  margin-top: 0;
+}
+
+.panel-header {
+  margin-bottom: 1rem;
+}
+
+.workflow-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.workflow-row p {
+  margin: 0.3rem 0 0;
+  opacity: 0.6;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+@media (max-width: 800px) {
+  .dashboard-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .sidebar nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .sidebar nav li + li {
+    margin-top: 0;
+  }
+
+  .page-section {
+    padding: 2rem 1.25rem;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
