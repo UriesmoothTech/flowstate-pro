@@ -1,16 +1,13 @@
 import type { Workflow } from "@/lib/domain/workflow";
+import { InMemoryWorkflowRepository } from "@/lib/repositories/in-memory-workflow-repository";
+import type { WorkflowRepository } from "@/lib/repositories/workflow-repository";
 
-const workflows: Workflow[] = [
-  {
-    id: "workflow-demo",
-    name: "Example Workflow",
-    description: "Initial FlowState Pro workflow foundation.",
-    status: "draft",
-    createdAt: "2026-01-01T00:00:00.000Z",
-    updatedAt: "2026-01-01T00:00:00.000Z",
-  },
-];
+const repository: WorkflowRepository = new InMemoryWorkflowRepository();
 
 export function listWorkflows(): Workflow[] {
-  return workflows;
+  return repository.list();
+}
+
+export function getWorkflow(id: string): Workflow | undefined {
+  return repository.getById(id);
 }
