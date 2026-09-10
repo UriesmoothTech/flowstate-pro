@@ -1,4 +1,7 @@
-import type { WorkflowExecution } from "@/lib/domain/workflow";
+import type {
+  WorkflowExecution,
+  WorkflowExecutionFailureCode,
+} from "@/lib/domain/workflow";
 import type { WorkflowExecutionRepository } from "@/lib/repositories/workflow-execution-repository";
 import {
   getWorkflowExecution,
@@ -60,10 +63,16 @@ export function completeWorkflowExecution(
   );
 }
 
+export interface WorkflowExecutionFailureOptions {
+  errorCode?: WorkflowExecutionFailureCode;
+  errorMessage?: string;
+}
+
 export function failWorkflowExecution(
   id: string,
   completedAt: string,
   repository: WorkflowExecutionRepository = defaultWorkflowExecutionRepository,
+  options: WorkflowExecutionFailureOptions = {},
 ): WorkflowExecution {
   const execution = getWorkflowExecution(id, repository);
 
@@ -82,6 +91,8 @@ export function failWorkflowExecution(
       ...execution,
       status: "failed",
       completedAt,
+      errorCode: options.errorCode ?? "EXECUTION_UNKNOWN_ERROR",
+      errorMessage: options.errorMessage ?? "Workflow execution failed",
     },
     repository,
   );

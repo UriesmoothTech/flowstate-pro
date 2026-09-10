@@ -60,6 +60,10 @@ describe("Workflow execution orchestration", () => {
       "execution-fail",
       "2026-09-08T00:06:00.000Z",
       repository,
+      {
+        errorCode: "EXECUTION_TIMEOUT",
+        errorMessage: "Workflow exceeded execution deadline",
+      },
     );
 
     expect(result).toEqual({
@@ -68,6 +72,8 @@ describe("Workflow execution orchestration", () => {
       status: "failed",
       startedAt: "2026-09-08T00:00:00.000Z",
       completedAt: "2026-09-08T00:06:00.000Z",
+      errorCode: "EXECUTION_TIMEOUT",
+      errorMessage: "Workflow exceeded execution deadline",
     });
   });
 });

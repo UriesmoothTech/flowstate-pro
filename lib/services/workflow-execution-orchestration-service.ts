@@ -1,4 +1,5 @@
 import type { WorkflowExecution } from "@/lib/domain/workflow";
+import type { WorkflowExecutionFailureOptions } from "@/lib/services/workflow-execution-lifecycle-service";
 import type { WorkflowExecutionRepository } from "@/lib/repositories/workflow-execution-repository";
 import {
   createWorkflowExecution,
@@ -42,6 +43,7 @@ export function failExecution(
   id: string,
   completedAt: string,
   repository: WorkflowExecutionRepository,
+  options: WorkflowExecutionFailureOptions = {},
 ): WorkflowExecution {
-  return failWorkflowExecution(id, completedAt, repository);
+  return failWorkflowExecution(id, completedAt, repository, options);
 }

@@ -14,10 +14,24 @@ export interface Workflow {
   updatedAt: string;
 }
 
+export type WorkflowExecutionStatus =
+  | "queued"
+  | "running"
+  | "completed"
+  | "failed";
+
+export type WorkflowExecutionFailureCode =
+  | "EXECUTION_RUNTIME_ERROR"
+  | "EXECUTION_TIMEOUT"
+  | "EXECUTION_CANCELLED"
+  | "EXECUTION_UNKNOWN_ERROR";
+
 export interface WorkflowExecution {
   id: string;
   workflowId: string;
-  status: "queued" | "running" | "completed" | "failed";
+  status: WorkflowExecutionStatus;
   startedAt?: string;
   completedAt?: string;
+  errorCode?: WorkflowExecutionFailureCode;
+  errorMessage?: string;
 }
