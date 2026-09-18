@@ -7,24 +7,37 @@ export class InMemoryWorkflowExecutionRepository
   private readonly executions = new Map<string, WorkflowExecution>();
 
   create(execution: WorkflowExecution): WorkflowExecution {
-    this.executions.set(execution.id, execution);
+    if (this.executions.has(execution.id)) {
+      throw new Error(
+        `Workflow execution already exists: ${execution.id}`,
+      );
+    }
 
-    return execution;
+    const stored = { ...execution };
+    this.executions.set(stored.id, stored);
+    return { ...stored };
   }
 
   getById(id: string): WorkflowExecution | undefined {
-    return this.executions.get(id);
+    const execution = this.executions.get(id);
+    return execution ? { ...execution } : undefined;
   }
 
   listByWorkflowId(workflowId: string): WorkflowExecution[] {
-    return Array.from(this.executions.values()).filter(
-      (execution) => execution.workflowId === workflowId,
-    );
+    return Array.from(this.executions.values())
+      .filter((execution) => execution.workflowId === workflowId)
+      .map((execution) => ({ ...execution }));
   }
 
   update(execution: WorkflowExecution): WorkflowExecution {
-    this.executions.set(execution.id, execution);
+    if (!this.executions.has(execution.id)) {
+      throw new Error(
+        `Workflow execution not found: ${execution.id}`,
+      );
+    }
 
-    return execution;
+    const stored = { ...execution };
+    this.executions.set(stored.id, stored);
+    return { ...stored };
   }
 }

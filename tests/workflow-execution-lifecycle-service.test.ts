@@ -56,11 +56,35 @@ describe("Workflow execution lifecycle", () => {
     const result = failWorkflowExecution(
       "execution-fail",
       "2026-09-08T00:06:00.000Z",
+      undefined,
+      {
+        errorCode: "EXECUTION_RUNTIME_ERROR",
+        errorMessage: "Worker process exited unexpectedly",
+      },
     );
 
     expect(result.status).toBe("failed");
     expect(result.completedAt).toBe("2026-09-08T00:06:00.000Z");
+    expect(result.errorCode).toBe("EXECUTION_RUNTIME_ERROR");
+    expect(result.errorMessage).toBe("Worker process exited unexpectedly");
     expect(getWorkflowExecution("execution-fail")).toEqual(result);
+  });
+
+  it("uses default failure metadata when none is provided", () => {
+    createWorkflowExecution({
+      id: "execution-default-failure",
+      workflowId: "workflow-demo",
+      status: "running",
+      startedAt: "2026-09-08T00:00:00.000Z",
+    });
+
+    const result = failWorkflowExecution(
+      "execution-default-failure",
+      "2026-09-08T00:07:00.000Z",
+    );
+
+    expect(result.errorCode).toBe("EXECUTION_UNKNOWN_ERROR");
+    expect(result.errorMessage).toBe("Workflow execution failed");
   });
 
   it("rejects starting a non-queued execution", () => {
