@@ -2,6 +2,7 @@ import { GET as GETExecutions, POST } from "@/app/api/executions/route";
 import { GET as GETExecutionById } from "@/app/api/executions/[id]/route";
 import { POST as POSTStartExecution } from "@/app/api/executions/[id]/start/route";
 import { POST as POSTCompleteExecution } from "@/app/api/executions/[id]/complete/route";
+import { POST as POSTFailExecution } from "@/app/api/executions/[id]/fail/route";
 
 describe("POST /api/executions", () => {
   it("creates a workflow execution for a valid payload", async () => {
@@ -287,6 +288,61 @@ describe("POST /api/executions/[id]/complete", () => {
       status: "completed",
       startedAt: "2026-09-19T14:00:00.000Z",
       completedAt: "2026-09-19T14:30:00.000Z",
+    });
+  });
+});
+
+
+describe("POST /api/executions/[id]/fail", () => {
+  it("fails a running workflow execution", async () => {
+    const createRequest = new Request("http://localhost/api/executions", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        id: "execution-api-fail-1",
+        workflowId: "workflow-api-fail-1",
+        status: "queued",
+      }),
+    });
+
+    await POST(createRequest);
+
+    const startRequest = new Request(
+      "http://localhost/api/executions/execution-api-fail-1/start?startedAt=2026-09-19T14:00:00.000Z",
+      {
+        method: "POST",
+      },
+    );
+
+    await POSTStartExecution(startRequest, {
+      params: Promise.resolve({ id: "execution-api-fail-1" }),
+    });
+
+    const failRequest = new Request(
+      "http://localhost/api/executions/execution-api-fail-1/fail?completedAt=2026-09-19T14:30:00.000Z&errorCode=EXECUTION_RUNTIME_ERROR&errorMessage=Runtime%20failure",
+      {
+        method: "POST",
+      },
+    );
+
+    const response = await POSTFailExecution(failRequest, {
+      params: Promise.resolve({ id: "execution-api-fail-1" }),
+    });
+
+    expect(response.status).toBe(200);
+
+    const body = await response.json();
+
+    expect(body).toMatchObject({
+      id: "execution-api-fail-1",
+      workflowId: "workflow-api-fail-1",
+      status: "failed",
+      startedAt: "2026-09-19T14:00:00.000Z",
+      completedAt: "2026-09-19T14:30:00.000Z",
+      errorCode: "EXECUTION_RUNTIME_ERROR",
+      errorMessage: "Runtime failure",
     });
   });
 });
