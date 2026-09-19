@@ -1,5 +1,5 @@
-import { POST } from "@/app/api/executions/route";
-import { GET } from "@/app/api/executions/[id]/route";
+import { GET as GETExecutions, POST } from "@/app/api/executions/route";
+import { GET as GETExecutionById } from "@/app/api/executions/[id]/route";
 
 describe("POST /api/executions", () => {
   it("creates a workflow execution for a valid payload", async () => {
@@ -49,6 +49,81 @@ describe("POST /api/executions", () => {
   });
 });
 
+describe("GET /api/executions?workflowId=...", () => {
+  it("lists workflow executions for a workflow", async () => {
+    const workflowId = "workflow-api-list-1";
+
+    const firstCreateRequest = new Request(
+      "http://localhost/api/executions",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          id: "execution-api-list-1",
+          workflowId,
+          status: "queued",
+        }),
+      },
+    );
+
+    const secondCreateRequest = new Request(
+      "http://localhost/api/executions",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          id: "execution-api-list-2",
+          workflowId,
+          status: "completed",
+        }),
+      },
+    );
+
+    await POST(firstCreateRequest);
+    await POST(secondCreateRequest);
+
+    const response = await GETExecutions(
+      new Request(
+        "http://localhost/api/executions?workflowId=workflow-api-list-1",
+      ),
+    );
+
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual([
+      {
+        id: "execution-api-list-1",
+        workflowId,
+        status: "queued",
+      },
+      {
+        id: "execution-api-list-2",
+        workflowId,
+        status: "completed",
+      },
+    ]);
+  });
+
+  it("returns 400 when workflowId is missing", async () => {
+    const response = await GETExecutions(
+      new Request("http://localhost/api/executions"),
+    );
+
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body).toEqual({
+      error: "WORKFLOW_ID_REQUIRED",
+      message: "workflowId query parameter is required",
+    });
+  });
+});
+
 describe("GET /api/executions/[id]", () => {
   it("retrieves an existing workflow execution", async () => {
     const createRequest = new Request("http://localhost/api/executions", {
@@ -67,7 +142,7 @@ describe("GET /api/executions/[id]", () => {
 
     expect(createResponse.status).toBe(201);
 
-    const response = await GET(
+    const response = await GETExecutionById(
       new Request("http://localhost/api/executions/execution-api-get-1"),
       {
         params: Promise.resolve({
@@ -87,7 +162,7 @@ describe("GET /api/executions/[id]", () => {
   });
 
   it("returns 404 when the workflow execution does not exist", async () => {
-    const response = await GET(
+    const response = await GETExecutionById(
       new Request(
         "http://localhost/api/executions/execution-api-does-not-exist",
       ),
