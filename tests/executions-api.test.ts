@@ -1,5 +1,6 @@
 import { GET as GETExecutions, POST } from "@/app/api/executions/route";
 import { GET as GETExecutionById } from "@/app/api/executions/[id]/route";
+import { POST as POSTStartExecution } from "@/app/api/executions/[id]/start/route";
 
 describe("POST /api/executions", () => {
   it("creates a workflow execution for a valid payload", async () => {
@@ -180,6 +181,50 @@ describe("GET /api/executions/[id]", () => {
       error: "EXECUTION_NOT_FOUND",
       message:
         "Workflow execution not found: execution-api-does-not-exist",
+    });
+  });
+});
+
+describe("POST /api/executions/[id]/start", () => {
+  it("starts a queued workflow execution", async () => {
+    const createRequest = new Request("http://localhost/api/executions", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        id: "execution-api-start-1",
+        workflowId: "workflow-api-start-1",
+        status: "queued",
+      }),
+    });
+
+    const createResponse = await POST(createRequest);
+
+    expect(createResponse.status).toBe(201);
+
+    const response = await POSTStartExecution(
+      new Request(
+        "http://localhost/api/executions/execution-api-start-1/start?startedAt=2026-09-19T14:00:00.000Z",
+        {
+          method: "POST",
+        },
+      ),
+      {
+        params: Promise.resolve({
+          id: "execution-api-start-1",
+        }),
+      },
+    );
+
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({
+      id: "execution-api-start-1",
+      workflowId: "workflow-api-start-1",
+      status: "running",
+      startedAt: "2026-09-19T14:00:00.000Z",
     });
   });
 });
