@@ -345,4 +345,74 @@ describe("POST /api/executions/[id]/fail", () => {
       errorMessage: "Runtime failure",
     });
   });
+
+  it("requires completedAt when failing an execution", async () => {
+    const request = new Request(
+      "http://localhost/api/executions/execution-api-fail-missing-time/fail",
+      {
+        method: "POST",
+      },
+    );
+
+    const response = await POSTFailExecution(request, {
+      params: Promise.resolve({
+        id: "execution-api-fail-missing-time",
+      }),
+    });
+
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body).toEqual({
+      error: "COMPLETED_AT_REQUIRED",
+      message: "completedAt query parameter is required",
+    });
+  });
+
+  it("rejects an invalid execution failure code", async () => {
+    const request = new Request(
+      "http://localhost/api/executions/execution-api-fail-invalid-code/fail?completedAt=2026-09-19T15:00:00.000Z&errorCode=INVALID_CODE",
+      {
+        method: "POST",
+      },
+    );
+
+    const response = await POSTFailExecution(request, {
+      params: Promise.resolve({
+        id: "execution-api-fail-invalid-code",
+      }),
+    });
+
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body).toEqual({
+      error: "INVALID_ERROR_CODE",
+      message: "Invalid workflow execution error code: INVALID_CODE",
+    });
+  });
+
+  it("returns 404 when failing a missing execution", async () => {
+    const request = new Request(
+      "http://localhost/api/executions/execution-api-fail-missing/fail?completedAt=2026-09-19T15:00:00.000Z",
+      {
+        method: "POST",
+      },
+    );
+
+    const response = await POSTFailExecution(request, {
+      params: Promise.resolve({
+        id: "execution-api-fail-missing",
+      }),
+    });
+
+    const body = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(body).toEqual({
+      error: "EXECUTION_NOT_FOUND",
+      message: "Workflow execution not found: execution-api-fail-missing",
+    });
+  });
+
 });
