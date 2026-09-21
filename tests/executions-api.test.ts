@@ -293,6 +293,109 @@ describe("POST /api/executions/[id]/complete", () => {
 });
 
 
+describe("POST /api/executions/[id]/complete", () => {
+  it("rejects an invalid completedAt timestamp", async () => {
+    const createRequest = new Request("http://localhost/api/executions", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        id: "execution-api-complete-invalid-time",
+        workflowId: "workflow-api-complete-invalid-time",
+        status: "queued",
+      }),
+    });
+
+    await POST(createRequest);
+
+    const startRequest = new Request(
+      "http://localhost/api/executions/execution-api-complete-invalid-time/start?startedAt=2026-09-19T14:00:00.000Z",
+      {
+        method: "POST",
+      },
+    );
+
+    await POSTStartExecution(startRequest, {
+      params: Promise.resolve({
+        id: "execution-api-complete-invalid-time",
+      }),
+    });
+
+    const request = new Request(
+      "http://localhost/api/executions/execution-api-complete-invalid-time/complete?completedAt=not-a-timestamp",
+      {
+        method: "POST",
+      },
+    );
+
+    const response = await POSTCompleteExecution(request, {
+      params: Promise.resolve({
+        id: "execution-api-complete-invalid-time",
+      }),
+    });
+
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body).toEqual({
+      error: "INVALID_COMPLETED_AT",
+      message: "Invalid completedAt timestamp: not-a-timestamp",
+    });
+  });
+
+  it("rejects completedAt earlier than startedAt", async () => {
+    const createRequest = new Request("http://localhost/api/executions", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        id: "execution-api-complete-time-order",
+        workflowId: "workflow-api-complete-time-order",
+        status: "queued",
+      }),
+    });
+
+    await POST(createRequest);
+
+    const startRequest = new Request(
+      "http://localhost/api/executions/execution-api-complete-time-order/start?startedAt=2026-09-19T14:00:00.000Z",
+      {
+        method: "POST",
+      },
+    );
+
+    await POSTStartExecution(startRequest, {
+      params: Promise.resolve({
+        id: "execution-api-complete-time-order",
+      }),
+    });
+
+    const request = new Request(
+      "http://localhost/api/executions/execution-api-complete-time-order/complete?completedAt=2026-09-19T13:30:00.000Z",
+      {
+        method: "POST",
+      },
+    );
+
+    const response = await POSTCompleteExecution(request, {
+      params: Promise.resolve({
+        id: "execution-api-complete-time-order",
+      }),
+    });
+
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body).toEqual({
+      error: "INVALID_COMPLETED_AT_ORDER",
+      message:
+        "completedAt cannot be earlier than startedAt for workflow execution execution-api-complete-time-order",
+    });
+  });
+});
+
 describe("POST /api/executions/[id]/fail", () => {
   it("fails a running workflow execution", async () => {
     const createRequest = new Request("http://localhost/api/executions", {
@@ -366,6 +469,107 @@ describe("POST /api/executions/[id]/fail", () => {
     expect(body).toEqual({
       error: "COMPLETED_AT_REQUIRED",
       message: "completedAt query parameter is required",
+    });
+  });
+
+  it("rejects an invalid completedAt timestamp", async () => {
+    const createRequest = new Request("http://localhost/api/executions", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        id: "execution-api-fail-invalid-time",
+        workflowId: "workflow-api-fail-invalid-time",
+        status: "queued",
+      }),
+    });
+
+    await POST(createRequest);
+
+    const startRequest = new Request(
+      "http://localhost/api/executions/execution-api-fail-invalid-time/start?startedAt=2026-09-19T14:00:00.000Z",
+      {
+        method: "POST",
+      },
+    );
+
+    await POSTStartExecution(startRequest, {
+      params: Promise.resolve({
+        id: "execution-api-fail-invalid-time",
+      }),
+    });
+
+    const request = new Request(
+      "http://localhost/api/executions/execution-api-fail-invalid-time/fail?completedAt=not-a-timestamp",
+      {
+        method: "POST",
+      },
+    );
+
+    const response = await POSTFailExecution(request, {
+      params: Promise.resolve({
+        id: "execution-api-fail-invalid-time",
+      }),
+    });
+
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body).toEqual({
+      error: "INVALID_COMPLETED_AT",
+      message: "Invalid completedAt timestamp: not-a-timestamp",
+    });
+  });
+
+  it("rejects completedAt earlier than startedAt", async () => {
+    const createRequest = new Request("http://localhost/api/executions", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        id: "execution-api-fail-time-order",
+        workflowId: "workflow-api-fail-time-order",
+        status: "queued",
+      }),
+    });
+
+    await POST(createRequest);
+
+    const startRequest = new Request(
+      "http://localhost/api/executions/execution-api-fail-time-order/start?startedAt=2026-09-19T14:00:00.000Z",
+      {
+        method: "POST",
+      },
+    );
+
+    await POSTStartExecution(startRequest, {
+      params: Promise.resolve({
+        id: "execution-api-fail-time-order",
+      }),
+    });
+
+    const request = new Request(
+      "http://localhost/api/executions/execution-api-fail-time-order/fail?completedAt=2026-09-19T13:30:00.000Z",
+      {
+        method: "POST",
+      },
+    );
+
+    const response = await POSTFailExecution(request, {
+      params: Promise.resolve({
+        id: "execution-api-fail-time-order",
+      }),
+    });
+
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body).toEqual({
+      error: "INVALID_COMPLETED_AT_ORDER",
+      message:
+        "completedAt cannot be earlier than startedAt for workflow execution execution-api-fail-time-order",
     });
   });
 

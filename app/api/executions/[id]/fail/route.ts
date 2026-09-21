@@ -74,6 +74,30 @@ export async function POST(
       );
     }
 
+    if (message.startsWith("Invalid completedAt timestamp:")) {
+      return NextResponse.json(
+        {
+          error: "INVALID_COMPLETED_AT",
+          message,
+        },
+        { status: 400 },
+      );
+    }
+
+    if (
+      message.startsWith(
+        "completedAt cannot be earlier than startedAt",
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error: "INVALID_COMPLETED_AT_ORDER",
+          message,
+        },
+        { status: 400 },
+      );
+    }
+
     return NextResponse.json(
       {
         error: "EXECUTION_FAIL_FAILED",

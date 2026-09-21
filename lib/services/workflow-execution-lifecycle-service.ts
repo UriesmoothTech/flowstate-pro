@@ -8,12 +8,17 @@ import {
   updateWorkflowExecution,
   defaultWorkflowExecutionRepository,
 } from "@/lib/services/workflow-execution-service";
+import { isValidWorkflowExecutionTimestamp } from "@/lib/services/workflow-execution-timestamp-service";
 
 export function startWorkflowExecution(
   id: string,
   startedAt: string,
   repository: WorkflowExecutionRepository = defaultWorkflowExecutionRepository,
 ): WorkflowExecution {
+  if (!isValidWorkflowExecutionTimestamp(startedAt)) {
+    throw new Error(`Invalid startedAt timestamp: ${startedAt}`);
+  }
+
   const execution = getWorkflowExecution(id, repository);
 
   if (!execution) {
@@ -41,6 +46,10 @@ export function completeWorkflowExecution(
   completedAt: string,
   repository: WorkflowExecutionRepository = defaultWorkflowExecutionRepository,
 ): WorkflowExecution {
+  if (!isValidWorkflowExecutionTimestamp(completedAt)) {
+    throw new Error(`Invalid completedAt timestamp: ${completedAt}`);
+  }
+
   const execution = getWorkflowExecution(id, repository);
 
   if (!execution) {
@@ -50,6 +59,15 @@ export function completeWorkflowExecution(
   if (execution.status !== "running") {
     throw new Error(
       `Cannot complete workflow execution ${id} from status ${execution.status}`,
+    );
+  }
+
+  if (
+    execution.startedAt &&
+    Date.parse(completedAt) < Date.parse(execution.startedAt)
+  ) {
+    throw new Error(
+      `completedAt cannot be earlier than startedAt for workflow execution ${id}`,
     );
   }
 
@@ -74,6 +92,10 @@ export function failWorkflowExecution(
   repository: WorkflowExecutionRepository = defaultWorkflowExecutionRepository,
   options: WorkflowExecutionFailureOptions = {},
 ): WorkflowExecution {
+  if (!isValidWorkflowExecutionTimestamp(completedAt)) {
+    throw new Error(`Invalid completedAt timestamp: ${completedAt}`);
+  }
+
   const execution = getWorkflowExecution(id, repository);
 
   if (!execution) {
@@ -83,6 +105,15 @@ export function failWorkflowExecution(
   if (execution.status !== "running") {
     throw new Error(
       `Cannot fail workflow execution ${id} from status ${execution.status}`,
+    );
+  }
+
+  if (
+    execution.startedAt &&
+    Date.parse(completedAt) < Date.parse(execution.startedAt)
+  ) {
+    throw new Error(
+      `completedAt cannot be earlier than startedAt for workflow execution ${id}`,
     );
   }
 

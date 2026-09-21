@@ -27,6 +27,16 @@ export async function POST(
     const message =
       error instanceof Error ? error.message : "Unable to start execution";
 
+    if (message.startsWith("Invalid startedAt timestamp:")) {
+      return NextResponse.json(
+        {
+          error: "INVALID_STARTED_AT",
+          message,
+        },
+        { status: 400 },
+      );
+    }
+
     if (message === `Workflow execution not found: ${id}`) {
       return NextResponse.json(
         {
