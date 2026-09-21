@@ -1,4 +1,5 @@
 import type { WorkflowExecution } from "@/lib/domain/workflow";
+import { InMemoryWorkflowExecutionRepository } from "@/lib/repositories/in-memory-workflow-execution-repository";
 import {
   createWorkflowExecution,
   getWorkflowExecution,
@@ -145,5 +146,125 @@ describe("Workflow execution lifecycle", () => {
         "2026-09-08T00:00:00.000Z",
       ),
     ).toThrow("Workflow execution not found: does-not-exist");
+  });
+});
+
+describe("workflow execution timestamp validation", () => {
+  it("rejects an invalid startedAt timestamp", () => {
+    const repository = new InMemoryWorkflowExecutionRepository();
+
+    createWorkflowExecution(
+      {
+        id: "execution-invalid-started-at",
+        workflowId: "workflow-timestamp-validation",
+        status: "queued",
+      },
+      repository,
+    );
+
+    expect(() =>
+      startWorkflowExecution(
+        "execution-invalid-started-at",
+        "not-a-timestamp",
+        repository,
+      ),
+    ).toThrow(
+      "Invalid startedAt timestamp: not-a-timestamp",
+    );
+  });
+
+  it("rejects an impossible startedAt date", () => {
+    const repository = new InMemoryWorkflowExecutionRepository();
+
+    createWorkflowExecution(
+      {
+        id: "execution-impossible-started-at",
+        workflowId: "workflow-timestamp-validation",
+        status: "queued",
+      },
+      repository,
+    );
+
+    expect(() =>
+      startWorkflowExecution(
+        "execution-impossible-started-at",
+        "2026-02-30T14:00:00.000Z",
+        repository,
+      ),
+    ).toThrow(
+      "Invalid startedAt timestamp: 2026-02-30T14:00:00.000Z",
+    );
+  });
+
+  it("rejects an invalid completedAt timestamp", () => {
+    const repository = new InMemoryWorkflowExecutionRepository();
+
+    createWorkflowExecution(
+      {
+        id: "execution-invalid-completed-at",
+        workflowId: "workflow-timestamp-validation",
+        status: "running",
+        startedAt: "2026-09-19T14:00:00.000Z",
+      },
+      repository,
+    );
+
+    expect(() =>
+      completeWorkflowExecution(
+        "execution-invalid-completed-at",
+        "not-a-timestamp",
+        repository,
+      ),
+    ).toThrow(
+      "Invalid completedAt timestamp: not-a-timestamp",
+    );
+  });
+
+  it("rejects completion before startedAt", () => {
+    const repository = new InMemoryWorkflowExecutionRepository();
+
+    createWorkflowExecution(
+      {
+        id: "execution-complete-before-start",
+        workflowId: "workflow-timestamp-validation",
+        status: "running",
+        startedAt: "2026-09-19T14:00:00.000Z",
+      },
+      repository,
+    );
+
+    expect(() =>
+      completeWorkflowExecution(
+        "execution-complete-before-start",
+        "2026-09-19T13:59:59.999Z",
+        repository,
+      ),
+    ).toThrow(
+      "completedAt cannot be earlier than startedAt for workflow execution execution-complete-before-start",
+    );
+  });
+
+  it("rejects failure before startedAt", () => {
+    const repository = new InMemoryWorkflowExecutionRepository();
+
+    createWorkflowExecution(
+      {
+        id: "execution-fail-before-start",
+        workflowId: "workflow-timestamp-validation",
+        status: "running",
+        startedAt: "2026-09-19T14:00:00.000Z",
+      },
+      repository,
+    );
+
+    expect(() =>
+      failWorkflowExecution(
+        "execution-fail-before-start",
+        "2026-09-19T13:59:59.999Z",
+        repository,
+      ),
+    ).toThrow(
+      "completedAt cannot be earlier than startedAt for workflow execution execution-fail-before-start",
+    );
   });
 });
