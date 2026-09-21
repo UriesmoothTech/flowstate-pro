@@ -12,7 +12,10 @@
     "test": "jest --runInBand"
   },
   "dependencies": {
+    "dotenv": "^18.0.1",
+    "drizzle-orm": "^0.45.3",
     "next": "^16.3.3",
+    "pg": "^8.23.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "zod": "^4.6.5"
@@ -20,13 +23,16 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^20.19.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.3.3",
     "jest": "^30.5.1",
     "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.0"
   },
   "engines": {
