@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createWorkflowExecution } from "@/lib/services/workflow-execution-service";
+import {
+  createWorkflowExecution,
+  listWorkflowExecutions,
+} from "@/lib/services/workflow-execution-service";
 
 const workflowExecutionSchema = z.object({
   id: z.string().min(1),
@@ -18,6 +21,24 @@ const workflowExecutionSchema = z.object({
     .optional(),
   errorMessage: z.string().optional(),
 });
+
+export async function GET(request: Request) {
+  const workflowId = new URL(request.url).searchParams.get("workflowId");
+
+  if (!workflowId) {
+    return NextResponse.json(
+      {
+        error: "WORKFLOW_ID_REQUIRED",
+        message: "workflowId query parameter is required",
+      },
+      { status: 400 },
+    );
+  }
+
+  const executions = listWorkflowExecutions(workflowId);
+
+  return NextResponse.json(executions, { status: 200 });
+}
 
 export async function POST(request: Request) {
   try {
