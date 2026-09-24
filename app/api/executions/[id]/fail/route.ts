@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { WorkflowExecutionFailureCode } from "@/lib/domain/workflow";
-import { failWorkflowExecution } from "@/lib/services/workflow-execution-lifecycle-service";
+import { failWorkflowExecutionAsync } from "@/lib/services/async-workflow-execution-lifecycle-service";
+import { createWorkflowExecutionRepository } from "@/lib/repositories/workflow-execution-repository-factory";
 
 const FAILURE_CODES: WorkflowExecutionFailureCode[] = [
   "EXECUTION_RUNTIME_ERROR",
@@ -52,10 +53,17 @@ export async function POST(
   const errorCode = errorCodeParam ?? undefined;
 
   try {
-    const execution = failWorkflowExecution(id, completedAt, undefined, {
-      errorCode,
-      errorMessage,
-    });
+    const repository = await createWorkflowExecutionRepository();
+
+    const execution = await failWorkflowExecutionAsync(
+      id,
+      completedAt,
+      repository,
+      {
+        errorCode,
+        errorMessage,
+      },
+    );
 
     return NextResponse.json(execution, { status: 200 });
   } catch (error) {

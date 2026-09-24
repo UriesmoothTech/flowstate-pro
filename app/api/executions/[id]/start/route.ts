@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { startWorkflowExecution } from "@/lib/services/workflow-execution-lifecycle-service";
+import { startWorkflowExecutionAsync } from "@/lib/services/async-workflow-execution-lifecycle-service";
+import { createWorkflowExecutionRepository } from "@/lib/repositories/workflow-execution-repository-factory";
 
 export async function POST(
   request: Request,
@@ -20,7 +21,13 @@ export async function POST(
   }
 
   try {
-    const execution = startWorkflowExecution(id, startedAt);
+    const repository = await createWorkflowExecutionRepository();
+
+    const execution = await startWorkflowExecutionAsync(
+      id,
+      startedAt,
+      repository,
+    );
 
     return NextResponse.json(execution, { status: 200 });
   } catch (error) {

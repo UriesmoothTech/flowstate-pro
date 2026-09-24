@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
-  createWorkflowExecution,
-  listWorkflowExecutions,
-} from "@/lib/services/workflow-execution-service";
+  createWorkflowExecutionAsync,
+  listWorkflowExecutionsAsync,
+} from "@/lib/services/async-workflow-execution-service";
+import { createWorkflowExecutionRepository } from "@/lib/repositories/workflow-execution-repository-factory";
 
 const workflowExecutionSchema = z.object({
   id: z.string().min(1),
@@ -35,9 +36,27 @@ export async function GET(request: Request) {
     );
   }
 
-  const executions = listWorkflowExecutions(workflowId);
+  try {
+    const repository = await createWorkflowExecutionRepository();
 
-  return NextResponse.json(executions, { status: 200 });
+    const executions = await listWorkflowExecutionsAsync(
+      workflowId,
+      repository,
+    );
+
+    return NextResponse.json(executions, { status: 200 });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unable to list executions";
+
+    return NextResponse.json(
+      {
+        error: "EXECUTION_LIST_FAILED",
+        message,
+      },
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -56,7 +75,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const execution = createWorkflowExecution(parsed.data);
+    const repository = await createWorkflowExecutionRepository();
+
+    const execution = await createWorkflowExecutionAsync(
+      parsed.data,
+      repository,
+    );
 
     return NextResponse.json(execution, { status: 201 });
   } catch (error) {

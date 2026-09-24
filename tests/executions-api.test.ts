@@ -1,8 +1,24 @@
+import { InMemoryAsyncWorkflowExecutionRepository } from "@/lib/repositories/in-memory-async-workflow-execution-repository";
+import {
+  clearWorkflowExecutionRepositoryForTests,
+  setWorkflowExecutionRepositoryForTests,
+} from "@/lib/repositories/workflow-execution-repository-factory";
+
 import { GET as GETExecutions, POST } from "@/app/api/executions/route";
 import { GET as GETExecutionById } from "@/app/api/executions/[id]/route";
 import { POST as POSTStartExecution } from "@/app/api/executions/[id]/start/route";
 import { POST as POSTCompleteExecution } from "@/app/api/executions/[id]/complete/route";
 import { POST as POSTFailExecution } from "@/app/api/executions/[id]/fail/route";
+
+beforeEach(() => {
+  setWorkflowExecutionRepositoryForTests(
+    new InMemoryAsyncWorkflowExecutionRepository(),
+  );
+});
+
+afterEach(() => {
+  clearWorkflowExecutionRepositoryForTests();
+});
 
 describe("POST /api/executions", () => {
   it("creates a workflow execution for a valid payload", async () => {
