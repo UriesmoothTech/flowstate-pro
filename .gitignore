@@ -22,3 +22,5 @@ Thumbs.db
 *.tsbuildinfo
 .vercel
 .env*
+
+.neon
